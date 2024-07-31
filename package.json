@@ -1,0 +1,40 @@
+{
+  "name": "ashley-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon app.js",
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/johnnyyork13/ashley-backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/johnnyyork13/ashley-backend/issues"
+  },
+  "homepage": "https://github.com/johnnyyork13/ashley-backend#readme",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "firebase-admin": "^12.3.0",
+    "firebase-functions": "^5.0.1",
+    "nodemon": "^3.1.4",
+    "openai": "^4.53.2"
+  },
+  "engines": {
+    "node": "18"
+  }
+}
