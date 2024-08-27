@@ -29,6 +29,6 @@ app.use((err, req, res, next) => {
     res.status(err.status || 500);
 })
 
-app.listen(3000);
+// app.listen(3000);
 
-// exports.api = functions.https.onRequest(app);
+exports.api = functions.https.onRequest(app);
