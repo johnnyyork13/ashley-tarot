@@ -49,7 +49,7 @@ function composeDrawingMessage(userResponse) {
     const drawMessage = [
         {role: "system", content: `
             You will draw 10 random Tarot cards from a Tarot card deck that contains the following cards: ${cards}.
-            If you do not draw 10 cards, try again. 
+            If you do not draw 10 cards, try again. There must be a total of 10 cards after the draw.
             When the user was previously asked what the purpose of today's Tarot card reading was, they responded with: "${userResponse}".
             Draw all ten cards, and respond with the following in JSON format: {"card's index in provided list": "card explanation", "card's index in provided list": "card explanation"}.
             The explanation must be at least 3 or 4 sentences long for each card.
@@ -59,6 +59,19 @@ function composeDrawingMessage(userResponse) {
     ]
     return drawMessage;
 } 
+
+function composeSummaryMessage(messages) {
+    return [
+        {role: "system", content: `
+            You will provide a summary of the user's Tarot card reading. 
+            The user has requested a summary of the Tarot card reading. 
+            Provide a summary of the Tarot card reading based on the 10 cards that were drawn. 
+            The following is the previous conversation that occured before the user requested a summary: ${messages}.
+            Only respond with the summary and nothing else.
+            Do not add a delimiter of any kind.
+            `}
+    ]
+}
 
 router.post("/tarot-start", async(req, res, next) => {
     let state = "initial";
@@ -85,6 +98,17 @@ router.post("/tarot-draw", async(req, res, next) => {
     // const cards = req.body.messages.concat(completion.choices[0].message);
     const cards = completion.choices[0].message.content;
     res.json({cards: cards})
+})
+
+router.post("/tarot-summary", async(req, res, next) => {
+    const completion = await openai.chat.completions.create({
+        messages: composeSummaryMessage(req.body.messages),
+        model: model,
+    })
+
+    const updatedMessages = req.body.messages.concat(completion.choices[0].message);
+    // const summary = completion.choices[0].message.content;
+    res.json({messages: updatedMessages});
 })
 
 
