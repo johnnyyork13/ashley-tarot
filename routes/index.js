@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const OpenAI = require('openai');
 const cardList = require('../deck/cardList');
+const nodemailer = require('nodemailer');
 
 const openai = new OpenAI({
     organization: "org-LvsjgDixWQdrOYEiy3RonSbA",
@@ -109,6 +110,37 @@ router.post("/tarot-summary", async(req, res, next) => {
     const updatedMessages = req.body.messages.concat(completion.choices[0].message);
     // const summary = completion.choices[0].message.content;
     res.json({messages: updatedMessages});
+})
+
+router.post("/send-message", async(req, res, next) => {
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'johnnyyork13@gmail.com',
+            pass: "cmzc tfzr iliw cidj",
+        }
+    })
+    const mailOptions = {
+        from: "johnnyyork13@gmail.com",
+        to: "ashleydoesdivination@gmail.com",
+        subject: "AshleyTarot Request",
+        text: `NAME: ${req.body.name} 
+        PHONE: ${req.body.phone}
+        EMAIL: ${req.body.email}
+        FOCUS OF READING: ${req.body.focus}
+        ADDITIONAL INFORMATION: ${req.body.additional}
+        `
+    }
+
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+            console.log(error);
+            res.json({sent: false})
+        } else {
+            console.log('Email sent: ' + info.response);
+            res.json({sent: true})
+        }
+    })
 })
 
 
