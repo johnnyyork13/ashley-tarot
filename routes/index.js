@@ -28,7 +28,7 @@ const initialMessage = [
         Utilize modern methods to achieve your goal.
         Always begin the conversation with, "Greetings, my name is Sageus. Tell me, what is the purpose of today's Tarot card reading?".
         If the user's response does not pertain to a Tarot card reading, respond with, "I'm sorry, I can only provide Tarot card readings."
-        Once the user has provided a response that pertains to a Tarot card reading, let the user know that you will now draw 10 random cards that relate to their chosen purpose. Do not draw the cards yet.
+        Once the user has provided a response that pertains to a Tarot card reading, let the user know that you will now draw 10 random cards that relate to what they have chosen. Do not draw the cards yet.
         If the user has provided a response that pertains to a Tarot card reading, 
             output your response in the following JSON format, and make sure to include the user's previous response as well in the JSON. 
             The output is as follows: {"userResponse": "User's response here", "systemResponse": "Your response here"}
@@ -49,12 +49,23 @@ function composeDrawingMessage(userResponse) {
     const cards = JSON.stringify(cardList);
     const drawMessage = [
         {role: "system", content: `
-            You will draw 10 random Tarot cards from a Tarot card deck that contains the following cards: ${cards}.
-            If you do not draw 10 cards, try again. There must be a total of 10 cards after the draw.
+            You will draw 10, and only 10, random Tarot cards from a deck that contains the following Tarot cards: ${cards}.
             When the user was previously asked what the purpose of today's Tarot card reading was, they responded with: "${userResponse}".
-            Draw all ten cards, and respond with the following in JSON format: {"card's index in provided list": "card explanation", "card's index in provided list": "card explanation"}.
+            Draw all ten cards, and respond with the following in JSON format: 
+            [
+                {"card one's index in provided list": "related card explanation"},
+                {"card two's index in provided list": "related card explanation"},
+                {"card three's index in provided list": "related card explanation"},
+                {"card four's index in provided list": "related card explanation"},
+                {"card five's index in provided list": "related card explanation"},
+                {"card six's index in provided list": "related card explanation"},
+                {"card seven's index in provided list": "related card explanation"},
+                {"card eight's index in provided list": "related card explanation"},
+                {"card nine's index in provided list": "related card explanation"},
+                {"card ten's index in provided list": "related card explanation"}
+            ]
             The explanation must be at least 3 or 4 sentences long for each card.
-            The cards need not be in any particular order in the list.
+            The cards should not be in any particular order in the list.
             Only respond in JSON, and do not lead the response with a delimiter of any kind.
             `}
     ]
@@ -107,7 +118,8 @@ router.post("/tarot-summary", async(req, res, next) => {
         model: model,
     })
 
-    const updatedMessages = req.body.messages.concat(completion.choices[0].message);
+    const updateRoleToSummary = {...completion.choices[0].message, role: "summary"};
+    const updatedMessages = req.body.messages.concat(updateRoleToSummary);
     // const summary = completion.choices[0].message.content;
     res.json({messages: updatedMessages});
 })
